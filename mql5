@@ -1,0 +1,94 @@
+
+// Program Name: Trend Follower MQLSquare MT4
+// Developer's Site: forexroboteasy.com
+// Development Name: Forex Robot Easy Team
+
+// Include necessary libraries
+#include <Trade\Trade.mqh>
+#include <Trade\StopLossLevel.mqh>
+#include <Trade\TakeProfitLevel.mqh>
+
+// Define constants
+#define LOT_SIZE 0.1
+#define MAX_TRADES 5
+#define RISK_PERCENTAGE 2
+
+// Define global variables
+CTrade trade;
+StopLossLevel stopLoss;
+TakeProfitLevel takeProfit;
+
+// Define trend following function
+bool isTrend()
+{
+    // Implement your trend identification logic here
+    // Return true if there is a trend, false otherwise
+    return true;
+}
+
+// Define Forex multiplier function
+double calculateMultiplier()
+{
+    // Implement your innovative Forex multiplier logic here
+    // Return the calculated multiplier value
+    return 2.0;
+}
+
+// Define trading function
+void tradeTrend()
+{
+    // Check if there is a trend
+    if (isTrend())
+    {
+        // Calculate the lot size based on risk percentage
+        double lotSize = AccountBalance() * RISK_PERCENTAGE / 100.0 / calculateMultiplier();
+
+        // Open trades
+        for (int i = 0; i < MAX_TRADES; i++)
+        {
+            // Check available margin
+            if (AccountFreeMargin() < lotSize)
+                break;
+
+            // Open a trade with calculated lot size
+            trade.Buy(LOT_SIZE, Symbol(), Ask, 0, stopLoss, takeProfit);
+            
+            // Update lot size for the next trade
+            lotSize *= calculateMultiplier();
+        }
+    }
+}
+
+// Define main program entry point
+void OnTick()
+{
+    // Execute the trend following strategy
+    tradeTrend();
+}
+
+// Define program initialization function
+int OnInit()
+{
+    // Set stop loss and take profit levels
+    stopLoss.SetLevel(100); // Set stop loss at 100 pips
+    takeProfit.SetLevel(200); // Set take profit at 200 pips
+
+    // Initialize trade module
+    trade.SetDeviationInPoints(10); // Set deviation at 10 points
+
+    return(INIT_SUCCEEDED);
+}
+
+// Define program deinitialization function
+void OnDeinit(const int reason)
+{
+    // Close any open trades
+    trade.PositionClose(Symbol());
+}
+
+// Define program start function
+void OnStart()
+{
+    // Start the program
+}
+
